@@ -15,28 +15,28 @@ Understanding whether or not a country’s capital openness affects foreign dire
 ### Goal of Analysis
 
 Our questions of interest:
+
 1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
-2. 
+2.
 
 ### Data
-
 
 #### List of Variables You Actually Use
 
 #### Data cleaning process
 
-
-**1)  Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing 
-values, text character replacement, matching.  It is ok if your data did not require much of 
+**1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing
+values, text character replacement, matching. It is ok if your data did not require much of
 this.
 
-Variables we want to use: 
+Variables we want to use:
 gdppc
 trade_dependence
 
 wto
 
 Use the following to predict gdppc?
+
 - polity
 - v2x_polyarchy
 - v2x_rule
@@ -56,8 +56,8 @@ colnames(fdi)
 
 ```
 
-**2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
-scatterplot (can be matrix plot), normal quantile plot (can be related to regression), 
+**2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
+scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
 residual plots, histogram.
 
 ```{r}
@@ -65,7 +65,7 @@ residual plots, histogram.
 plot(fdi$gdp_per_capita, fdi$democracy_index)
 ```
 
-**3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
+**3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
 either a t-test or a correlation.
 
 ```{r}
@@ -75,17 +75,17 @@ t.test(fdi$fdi_per_gdp ~ fdi$alliance_US)
 
 ```
 
-**4)  Permutation Test** - include at least one.
+**4) Permutation Test** - include at least one.
 
-**5)  Multiple Regression** - use either backwards stepwise regression or some form of best 
-subsets regression.  Should include residual plots.  A GLM with a mix of continuous and 
+**5) Multiple Regression** - use either backwards stepwise regression or some form of best
+subsets regression. Should include residual plots. A GLM with a mix of continuous and
 categorical predictors is fine here.
 
-**6)  AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic 
+**6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
 fdi_multinomial = fdi[]
 ```
 
-####  Conclusion and Summary
+#### Conclusion and Summary
