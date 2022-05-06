@@ -1,5 +1,5 @@
 ---
-title: "Final Web Data Scraping"
+title: "Final Project"
 author: "S&DS 230/S&DS 530/ENV 757/PLSC 530"
 subtitle: Due by 11:59am, Saturday, May 7, 2022
 output:
@@ -8,114 +8,24 @@ output:
   pdf_document: default
 ---
 
+**1)  Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing 
+values, text character replacement, matching.  It is ok if your data did not require much of 
+this.
 
-```{r setup }
+**2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
+scatterplot (can be matrix plot), normal quantile plot (can be related to regression), 
+residual plots, histogram.
 
-#Some handy libraries
-library(car)
-library(leaps)
-library(lubridate)
-library(rvest)
+**3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
+either a t-test or a correlation.
 
-```
+**4)  Permutation Test** - include at least one.
 
+**5)  Multiple Regression** - use either backwards stepwise regression or some form of best 
+subsets regression.  Should include residual plots.  A GLM with a mix of continuous and 
+categorical predictors is fine here.
 
-**1)  Scraping Info on S&P 500 Companies** *(30 pts - 5 pts each section, except part 1.5 which is 10 pts)*
-
-The first site you'll scrape data from is [HERE](https://www.slickcharts.com/sp500).  The site contains some information on companies that make up the Standard and Poor 500 index.
-
-1.1)  Make an object called `url` that has the website location.  Get R to open this webpage.  Read the html information into an object called `webpage`.
-
-```{r}
-url <- "https://www.slickcharts.com/sp500"
-browseURL(url)
-webpage <- read_html(url)
-```
-
-1.2)  Using the web scraping techniques we discussed in class, create an object called `companyRank` that has the company ranking.  Make sure the object is stored as an integer. Get the head and length of this object.  *Interestingly, the length is more than 500.*
-
-```{r}
-rankingHTML <- html_nodes(webpage, 'td:nth-child(1)')
-companyRank <- html_text(rankingHTML)
-companyRank <- as.integer(companyRank)
-head(companyRank)
-length(companyRank)
-```
-
-1.3)  Similarly, create an object called `companyName` that contains the names of the companies.  Again, get the head and length of this object.
-
-```{r}
-nameHTML <- html_nodes(webpage, 'td:nth-child(2)')
-companyName <- html_text(nameHTML)
-head(companyName)
-length(companyName)
-```
-
-1.4)  Similarly, create an object called `companyWeight` that contains the weight of each company in the overall index.  Make sure this object is stored as a number.  Again, get the head and length of this object.
-
-```{r}
-weightHTML <- html_nodes(webpage, 'td:nth-child(4)')
-companyWeight <- html_text(weightHTML)
-companyWeight <- as.numeric(companyWeight)
-head(companyWeight)
-length(companyWeight)
-```
-
-1.5)  Create an object called `companySymb` that contains the symbol for each company.  Again, get the head and length of this object. 
-
-```{r}
-symbHTML <- html_nodes(webpage, 'td:nth-child(3)')
-companySymb <- html_text(symbHTML)
-head(companySymb)
-length(companySymb)
-```
-
-**2)  Scraping More Info on S&P 500 Companies** *(20 pts - 3 pts for 2.1, 17 points for 2.2)*
-
-Here is another website that has up to date information on the trading price of S&P 500 component companies.
-
-[SITE](https://www.investing.com/indices/us-spx-500-components)
-
-2.1)  Make an object called `url2` that has the website location.  Get R to open this webpage.  Read the html information into an object called `webpage2`.
-
-```{r}
-url2 <- "https://www.investing.com/indices/investing.com-us-500-components"
-browseURL(url2)
-webpage2 <- read_html(url2)
-```
-
-2.2)  Create two new objects called `companyName2` and `companyPrice` that contain (respectively), the company name and the last price of the company.  This process is somwhat trickier.  You'll need to to the following:
-
-* Read in all of the information from each row of the main data table into an object called `alldatHTML`.
-* Look at the first 20 elements of `alldatHTML`.  You'll notice that it takes 10 elements to describe each company.
-* Get the length of `alldatHTML`.  You should get a number just under 5000.
-
-To get Company Price
-
-* Create an object called `companyPrice` that just has the rows of `alldatHTML` that have the last recorded price.
-* Get the head of `companyPrice` to confirm it's correct.
-* Use text cleaning techniques (i.e. gsub etc.) to extract the current price information from `companyPrice`.  Convert this to numeric.
-* Get head of `companyPrice` to confirm that everything worked correctly.
-
-```{r}
-(alldatHTML <- html_nodes(webpage2, "#cr1 td"))
-length(alldatHTML)
-row_mod <- seq_len(length(alldatHTML)) %% 10
-companyPrice <- alldatHTML[row_mod == 3]
-head(companyPrice)
-companyPrice <- html_text(companyPrice)
-companyPrice <- as.numeric(companyPrice)
-head(companyPrice)
-```
-
-Repeat the 4 previous steps (modified of course) to create `companyName2`.
-
-```{r}
-companyName2 <- alldatHTML[row_mod == 2]
-head(companyName2)
-companyName2 <- html_text(companyName2)
-head(companyName2)
-```
+**6)  AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic 
+Regression, Multinomial Regression, OR data scraping off a website.
 
 
-THE END
