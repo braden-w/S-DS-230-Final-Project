@@ -68,7 +68,12 @@ plot(fdi$gdp_per_capita, fdi$democracy_index)
 **3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
 either a t-test or a correlation.
 
+```{r}
+fdi_t_test <- fdi[,c("fdi_per_gdp", "alliance_US")]
+t.test(fdi$fdi_per_gdp ~ fdi$alliance_US)
 
+
+```
 
 **4)  Permutation Test** - include at least one.
 
