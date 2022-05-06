@@ -18,9 +18,32 @@ Our questions of interest:
 1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
 2. 
 
+### Data
+
+
+#### List of Variables You Actually Use
+
+#### Data cleaning process
+
+
 **1)  Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing 
 values, text character replacement, matching.  It is ok if your data did not require much of 
 this.
+
+Variables we want to use: 
+gdppc
+trade_dependence
+
+wto
+
+Use the following to predict gdppc?
+- polity
+- v2x_polyarchy
+- v2x_rule
+- v2x_gender
+- ka_open
+
+t-test for difference in means between alliance_US and alliance_RU
 
 ```{r}
 fdi <- read.csv("fdi_data.csv")
@@ -28,7 +51,9 @@ dim(fdi)
 head(fdi)
 colnames(fdi)
 
-### Key globalVariables()
+### Key Variables
+
+
 ```
 
 **2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
@@ -55,5 +80,7 @@ categorical predictors is fine here.
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
-fdi_multinomial = 
+fdi_multinomial = fdi[]
 ```
+
+####  Conclusion and Summary
