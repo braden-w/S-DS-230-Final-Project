@@ -8,16 +8,42 @@ output:
   pdf_document: default
 ---
 
+### Introduction: Background and Motivation
+
+Understanding whether or not a country’s capital openness affects foreign direct investment can help policymakers better understand how to attract (or reduce) foreign investment.
+
+### Goal of Analysis
+
+Our questions of interest:
+1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
+2. 
+
 **1)  Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing 
 values, text character replacement, matching.  It is ok if your data did not require much of 
 this.
+
+```{r}
+fdi <- read.csv("fdi_data.csv")
+dim(fdi)
+head(fdi)
+colnames(fdi)
+
+### Key globalVariables()
+```
 
 **2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
 scatterplot (can be matrix plot), normal quantile plot (can be related to regression), 
 residual plots, histogram.
 
+```{r}
+# create scatterplot of gdp per capita vs. democracy index
+plot(fdi$gdp_per_capita, fdi$democracy_index)
+```
+
 **3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
 either a t-test or a correlation.
+
+
 
 **4)  Permutation Test** - include at least one.
 
@@ -28,4 +54,6 @@ categorical predictors is fine here.
 **6)  AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic 
 Regression, Multinomial Regression, OR data scraping off a website.
 
-
+```{r}
+fdi_multinomial = 
+```
