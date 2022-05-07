@@ -25,9 +25,150 @@ Our questions of interest:
 
 #### Data cleaning process
 
-**1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing
-values, text character replacement, matching. It is ok if your data did not require much of
-this.
+**1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching. It is ok if your data did not require much of this.
+
+Our data includes yearly data across a variety of variables for 175 countries from 1970-2019. 
+
+| Variable Names     | Description                                                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| country_name       | Country name                                                                                                                       |
+| COWcode            | Numerical code for country -- from Correlates of War Project                                                                       |
+| iso3c              | Alphabetical country code from ISO standard                                                                                        |
+| year               | Year of data                                                                                                                       |
+| fdi_flows          | Yearly net inflows of foreign direct investment                                                                                    |
+| fdi_per_gdp        | Yearly net inflows of foreign direct investment as percentage of GDP                                                               |
+| gdp                | Gross domestic product                                                                                                             |
+| gdppc              | Gross domestic product per capita                                                                                                  |
+| trade_dependence   | Total trade as percentage of GDP                                                                                                   |
+| inflation          | Inflation rate                                                                                                                     |
+| nat_resoc_rents    | Percentage of GDP derived from natural resources                                                                                   |
+| bits               | Number of bilateral investment traties in force in the country                                                                     |
+| wto                | Shows whether the country is a WTO member                                                                                          |
+| Polity             | Polity5 Democracy Index -- higher values == stronger democracy                                                                     |
+| v2x_polyarchy      | Electoral democracy index -- higher values == stronger democratic institutions                                                     |
+| v2x_rule           | Rule of law index -- higher values == stronger rule of law                                                                         |
+| v2x_gender         | Women's political empowerment index -- higher values == greater political empowerment for women                                    |
+| polcon             | Political Constraint Index (veto players) -- higher values indicate greater number of veto players                                 |
+| ka_open            | Measure of capital account openness -- higher values == greater integration with global financial markets                          |
+| alliance_US        | Shows whether the country is a member of the US alliance                                                                           |
+| alliance_RU        | Shows whether the country is a member of the RU alliance                                                                           |
+| conflict           | Shows whether the country is in an armed conflict with any other country                                                           |
+| conflict_intensity | Shows the intensity of armed conflict in the country (minor or major)                                                              |
+| conflict_type      | Shows the type of armed conflict in the country (no conflict, extrasystemic, interstate, intrastate, internationalized intrastate) |
+| physint            | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights           |
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+fdi <- read.csv("fdi_data.csv")
+```
+
+#### Data cleaning process
+
+To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
+
+```{r}
+fdi$wto <- as.logical(fdi$wto)
+fdi$alliance_US <- as.logical(fdi$alliance_US)
+fdi$alliance_RU <- as.logical(fdi$alliance_RU)
+fdi$conflict <- as.logical(fdi$conflict)
+fdi$conflict_intensity <- ifelse(fdi$conflict_intensity == 1, "minor", "major")
+fdi$conflict_type[fdi$conflict_type == 0] <- "no conflict"
+fdi$conflict_type[fdi$conflict_type == 1] <- "extrasystemic"
+fdi$conflict_type[fdi$conflict_type == 2] <- "interstate"
+fdi$conflict_type[fdi$conflict_type == 3] <- "intrastate"
+fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"
+dim(fdi)
+head(fdi)
+```
+
+**1)  Data Cleaning**
+
+*Variable Names and their Descriptions*
+
+Categorical variables:
+
+* conflict | Shows whether the country is in an armed conflict with any other country 
+
+  * Value of 1 indicates conflict
+  
+  * Value of 0 indicates no conflict
+
+* conflict_intensity | Shows the intensity of armed conflict in the country
+
+  * Value of 0 indicates no conflict
+  
+  * Value of 1 indicates minor conflict
+  
+  * Value of 2 indicates major conflict
+  
+* conflict_type | Shows the type of conflict
+
+  * Value of 0 indicates no conflict
+  
+  * Value of 1 indicates extrasystemic conflict
+  
+  * Value of 2 indicates interstate conflict
+  
+  * Value of 3 indicates intrastate conflict
+  
+  * Value of 4 indicates internationalized intrastate
+  
+Continuous:
+
+* gdppc: Gross domestic product per capita (in USD)
+
+* trade_dependence: Total trade (imports + exports) as percentage of GDP
+
+* v2x_polyarchy
+
+  * Value from 0 - 1
+  
+  * Electoral democracy index where higher values == stronger democratic institutions
+
+* v2x_rule
+
+  * Value from 0 - 1
+  
+  * Rule of law index -- measures extent to which laws are fairly enforced -- higher values == stronger rule of law
+
+* v2x_gender: 
+
+  * Value from 0 - 1 
+  
+  * Women's political empowerment index -- higher values == greater political empowerment for women
+
+* ka_open: 
+
+  * Value from 0 - 1
+  
+  * Measure of capital account openness -- higher values == greater integration with global financial markets
+
+
+#### Data cleaning process
+
+To start, looking at the variables conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these values to booleans/more descriptive values to make it easier to work with and understand the data.
+
+```{r}
+fdi$conflict <- as.logical(fdi$conflict)
+fdi$conflict_intensity[fdi$conflict_intensity == 0] <- "None"
+fdi$conflict_intensity[fdi$conflict_intensity == 1] <- "Minor"
+fdi$conflict_intensity[fdi$conflict_intensity == 2] <- "Major"
+fdi$conflict_type[fdi$conflict_type == 0] <- "No conflict"
+fdi$conflict_type[fdi$conflict_type == 1] <- "Extrasystemic"
+fdi$conflict_type[fdi$conflict_type == 2] <- "Interstate"
+fdi$conflict_type[fdi$conflict_type == 3] <- "Intrastate"
+fdi$conflict_type[fdi$conflict_type == 4] <- "Internationalized intrastate"  
+```
+
+To further narrow down our data for this project, we will only be looking at data from countries in 2019. 
+```{r}
+fdi_2019 <- fdi[fdi$year == 2019,]
+dim(fdi_2019)
+head(fdi_2019)
+```
 
 Variables we want to use:
 gdppc
@@ -37,61 +178,147 @@ wto
 
 Use the following to predict gdppc?
 
-- polity
 - v2x_polyarchy
 - v2x_rule
 - v2x_gender
 - ka_open
-
-t-test for difference in means between alliance_US and alliance_RU
-
-```{r}
-fdi <- read.csv("fdi_data.csv")
-dim(fdi)
-head(fdi)
-colnames(fdi)
-```
-
-### Data Cleaning
-To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
-
-```{r}
-fdi$wto <- as.logical(fdi$wto)
-fdi$alliance_US <- as.logical(fdi$alliance_US)
-fdi$alliance_RU <- as.logical(fdi$alliance_RU)
-fdi$conflict <- as.logical(fdi$conflict)
-fdi$conflict_intensity <- ifelse(fdi$conflict_intensity == 1, "minor", "major")
-```
-### Key Variables
-
-
-```
 
 **2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
 scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
 residual plots, histogram.
 
 ```{r}
-# create scatterplot of gdp per capita vs. democracy index
-plot(fdi$gdp_per_capita, fdi$democracy_index)
+# create scatterplot of gdp per capita vs. democracy index in 2019
+plot(fdi_2019$gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
+title("GDP per capita vs. Democracy Index in 2019")
+
+# create scatterplot of gdp per capita vs. rule of law index in 2019
+plot(fdi_2019$gdppc, fdi_2019$v2x_rule, xlab="GDP per capita", ylab="Rule of Law Index")
+title("GDP per capita vs. Rule of Law Index in 2019")
+
+# create scatterplot of gdp per capita vs. women's policital empowerment in 2019
+plot(fdi_2019$gdppc, fdi_2019$v2x_gender, xlab="GDP per capita", ylab="Women's Political Empowerment Index")
+title("GDP per capita vs. Women's Political Empowerment Index in 2019")
+
+# create scatterplot of gdp per capita vs. measure of capital account openness
+
+plot(fdi_2019$gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Account Openness")
+title("GDP per capita vs. Capital Account Openness in 2019")
+
 ```
+
+This scatterplot does not convey a lot of useful information due to the outliers on the right side of the plot. To counteract this, we can replot this with the log of the GDP per capita.
+
+```{r}
+fdi_2019$log_gdppc <- log(fdi_2019$gdppc)
+# create scatterplot of gdp per capita vs. democracy index in 2019
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
+title("Log of GDP per capita vs. Democracy Index in 2019")
+
+# create scatterplot of gdp per capita vs. rule of law index in 2019
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_rule, xlab="GDP per capita", ylab="Rule of Law Index")
+title("Log of GDP per capita vs. Rule of Law Index in 2019")
+
+# create scatterplot of gdp per capita vs. women's policital empowerment in 2019
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_gender, xlab="GDP per capita", ylab="Women's Political Empowerment Index")
+title("Log of GDP per capita vs. Women's Political Empowerment Index in 2019")
+
+# create scatterplot of gdp per capita vs. measure of capital account openness
+plot(fdi_2019$log_gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Account Openness")
+title("Log of GDP per capita vs. Capital Account Openness in 2019")
+```
+
+After logging the gdppc, it is a bit easier to see that there is a slight positive correlation with gdppc for the democracy index and the rule of law index. Plotting the GDP per capita with the women's empowerment index does not show a significant correlation in any way.
 
 **3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
 either a t-test or a correlation.
 
-```{r}
-fdi_t_test <- fdi[,c("fdi_per_gdp", "alliance_US")]
-t.test(fdi$fdi_per_gdp ~ fdi$alliance_US)
+### Correlation
+
+We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.046.
+
+```{r, echo = FALSE}
+plot(jitter(fdi_2019$gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "gdppc", ylab = "fdi_per_gdp")
+mtext(paste("Correlation =", round(cor(fdi_2019$gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
+mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
+abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
 ```
 
 ```{r}
-fdi_correlation <- fdi[,c("fdi_per_gdp", "alliance_US")]
-cor(fdi$fdi_per_gdp, fdi$alliance_US)
+#Calculate the correlation between Conflict Intensity and GDP per Capita
+(cor5 <- round(cor(fdi_2019$gdppc, fdi_2019$conflict_intensity, use = "pairwise.complete.obs"),3))
 ```
 
+### T-Test
 
+Using a t-test, we analyzed if there was a difference in means between alliance_US and alliance_RU. We found that there was a significant difference in means between the two variables.
+
+```{r}
+# Create a dataframe with just two columns for target variables
+gddpc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
+
+# Remove rows with missing values in any column of data frame
+gddpc_ttest_data<- gddpc_ttest_data[complete.cases(gddpc_ttest_data),]
+
+colnames(gddpc_ttest_data) <- c("conflict", "gdppc")
+(ttest <- t.test(gddpc_ttest_data$gdppc ~ gddpc_ttest_data$conflict, conf.level = .99))
+```
+
+Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
+
+We then performed a bootstrapped 95% confidence interval:
+
+```{r, echo=FALSE}
+set.seed(230)
+
+N <- 10000
+bootstrapped_conflict <- rep(NA, N)
+for (i in 1:N) {
+  bootstrapped_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE],
+                   sum(gddpc_ttest_data$conflict == TRUE), replace = TRUE))
+}
+qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
+paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with armed conflict is (", qLeft[1], ", ", qLeft[2], ")")
+
+bottstrapped_no_conflict <- rep(NA, N)
+for (i in 1:N) {
+  bottstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
+                   sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
+}
+qRight <- quantile(bottstrapped_no_conflict, c(0.025, 0.975))
+paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with no armed conflict is (", qRight[1], ", ", qRight[2], ")")
+```
+
+The bootstrapped CIs indicate the same conclusion the t-test made which is that there is a significant difference in GDP per Capita between countries that are in armed conflicts versus those that are not.
 
 **4) Permutation Test** - include at least one.
+
+```{r, echo=FALSE}
+set.seed(230)
+
+N <- 10000
+diffvals <- rep(NA, N)
+for (i in 1:N) {
+  fakeconflict <- sample(gddpc_ttest_data$conflict)
+  diffvals[i] <- mean(gddpc_ttest_data$gdppc[fakeconflict == TRUE]) -
+    mean(gddpc_ttest_data$gdppc[fakeconflict == FALSE])
+}
+
+actualdiff <- mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE])  -
+  mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE])
+
+hist(diffvals,
+     col = "yellow",
+     main = "Permuted Sample Mean Diff in gdppc by conflict status",
+     xlab = "Difference in gdppc",
+     breaks = 50)
+abline(v = actualdiff, col = "blue", lwd = 3)
+text(actualdiff-.01, 300, paste("Actual Diff in Means =", round(actualdiff, 4)), srt = 90)
+
+paste("P-value:", mean(abs(diffvals) >= abs(actualdiff)))
+```
+
+The permuted sample mean difference in gdppc by party group suggests that the difference in the sample mean is approximately 0. The p-value of 0.7405 suggests that we fail to reject the null hypothesis and that at a significance level of 0.05 we conclude that the mean improvement in runtimes is not statistically significantly different between political groups.
 
 **5) Multiple Regression** - use either backwards stepwise regression or some form of best
 subsets regression. Should include residual plots. A GLM with a mix of continuous and
@@ -101,7 +328,9 @@ categorical predictors is fine here.
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
-fdi_multinomial = fdi[]
+fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity", "conflict_type")]
+fdi_anova <- fdi_anova[complete.cases(fdi_anova),]
+
 ```
 
 #### Conclusion and Summary
