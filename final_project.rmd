@@ -50,10 +50,10 @@ fdi <- read.csv("fdi_data.csv")
 dim(fdi)
 head(fdi)
 colnames(fdi)
-
-### Key Variables
-
-
+fdi_2019 <- fdi[fdi$year == 2019,]
+dim(fdi_2019)
+head(fdi_2019)
+colnames(fdi_2019)
 ```
 
 **2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
@@ -85,7 +85,11 @@ categorical predictors is fine here.
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
-fdi_multinomial = fdi[]
+fdi_anova <- fdi[c("gdppc", "conflict_intensity", "conflict_type")]
+dim(fdi_anova)
+fdi_anova <- fdi_anova[complete.cases(fdi_anova),]
+dim(fdi_anova)
+dim(fdi)
 ```
 
 ####  Conclusion and Summary
