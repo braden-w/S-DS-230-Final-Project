@@ -64,31 +64,18 @@ Categorical variables:
 Continuous:
 
 - gdppc: Gross domestic product per capita (in USD)
-
 - trade_dependence: Total trade (imports + exports) as percentage of GDP
-
 - v2x_polyarchy
-
   - Value from 0 - 1
-
   - Electoral democracy index where higher values == stronger democratic institutions
-
 - v2x_rule
-
   - Value from 0 - 1
-
   - Rule of law index -- measures extent to which laws are fairly enforced -- higher values == stronger rule of law
-
 - v2x_gender:
-
   - Value from 0 - 1
-
   - Women's political empowerment index -- higher values == greater political empowerment for women
-
 - ka_open:
-
   - Value from 0 - 1
-
   - Measure of capital account openness -- higher values == greater integration with global financial markets
 
 #### Data cleaning process
