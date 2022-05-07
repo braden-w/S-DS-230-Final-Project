@@ -215,7 +215,7 @@ actualdiff <- mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE])  -
 
 hist(diffvals,
      col = "yellow",
-     main = "Permuted Sample Mean Diff in gdppc by conflict status",
+     main = "Permuted Sample Mean Diff in gdppc by Conflict Status",
      xlab = "Difference in gdppc",
      breaks = 50)
 abline(v = actualdiff, col = "blue", lwd = 3)
@@ -224,7 +224,7 @@ text(actualdiff-.01, 300, paste("Actual Diff in Means =", round(actualdiff, 4)),
 paste("P-value:", mean(abs(diffvals) >= abs(actualdiff)))
 ```
 
-The permuted sample mean difference in gdppc by party group suggests that the difference in the sample mean is approximately 0. The p-value of 0.7405 suggests that we fail to reject the null hypothesis and that at a significance level of 0.05 we conclude that the mean improvement in runtimes is not statistically significantly different between political groups.
+The permuted sample mean difference in gdppc by party group suggests that the difference in the sample mean is approximately 0. The p-value of 0.005 suggests that we reject the null hypothesis and conclude that the mean improvement in gdppc between groups is statistically significantly different.
 
 **5) Multiple Regression** - use either backwards stepwise regression or some form of best
 subsets regression. Should include residual plots. A GLM with a mix of continuous and
