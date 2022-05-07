@@ -3,8 +3,8 @@ title: "Final Project"
 author: "S&DS 230/S&DS 530/ENV 757/PLSC 530"
 subtitle: Due by 11:59am, Saturday, May 7, 2022
 output:
-  pdf_document: default
   word_document: default
+  pdf_document: default
   html_document: default
 ---
 
@@ -14,7 +14,7 @@ In this project, we will be looking at the effect of various factors on GDP per 
 
 To do this, we will use the data from the World Bank (WDI) which includes yearly data across a variety of variables for 175 countries from 1970-2019. We are primarily interested in GDP per capita and our question of interest: among the variables selected for analysis, which ones have the greatest correlation with gdp per capita? We would also like to see how variables, such as the presence of armed conflict, relates to GDP per capita.
 
-```{r}
+```{r, include=F}
 fdi <- read.csv("fdi_data.csv")
 dim(fdi)
 head(fdi)
@@ -77,7 +77,7 @@ fdi$conflict_type[fdi$conflict_type == 4] <- "Internationalized intrastate"
 
 To further narrow down our data for this project, we will only be looking at data from countries in 2019.
 
-```{r}
+```{r, include=F}
 fdi_2019 <- fdi[fdi$year == 2019,]
 dim(fdi_2019)
 head(fdi_2019)
@@ -87,7 +87,7 @@ head(fdi_2019)
 
 ## Scatterplots
 
-```{r}
+```{r, echo=FALSE, fig.show="hold", out.width="50%"}
 # create scatterplot of gdp per capita vs. democracy index in 2019
 plot(fdi_2019$gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
 title("GDP per capita vs. Democracy Index in 2019")
@@ -331,3 +331,5 @@ plot(TukeyHSD(aov1), las=1)
 *We proceed with a Tukey confidence interval plot. Based on the diagram above, there is a statistically significant difference in log of GDP per capita between countries with no conflict and major conflict, and countries with no conflict and minor conflict, as the confidence interval for the difference in means of those comparison groups does not intersect 0. There, however, is not a statistically significant difference between countries with minor and major conflict, as the confidence interval for the difference of means of minor-major intersects 0.*
 
 # Conclusion and Summary
+
+In conclusion, we discovered the effects of different categorical and continuous variables on the log of GDP per capita. Through our multiple regression tests, we see that the rule of law and the openness of trade were positively correlated with the log of GDP per capita. We also found that the log of GDP per capita is significantly different among groups of countries with differing levels of conflict intensity and conflict itself. 
