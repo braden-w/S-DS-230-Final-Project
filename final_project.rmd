@@ -322,4 +322,4 @@ myResPlots2(aov1, label = "Log of GDP per Capita")
 
 _With the log transformation, the points are approximately normally distributed as they fall on a line in the normal quantile plot. In addition the fits vs. residuals plots shows no evidence of heteroskedasticity, as the residuals are evenly distributed about 0 and there is no significant increase in spread as fitted values increases. Therefore, our ANOVA results are valid._
 
-#### Conclusion and Summary
+# Conclusion and Summary
