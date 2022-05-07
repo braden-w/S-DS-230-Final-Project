@@ -10,14 +10,25 @@ output:
 
 ### Introduction: Background and Motivation
 
-Understanding whether or not a country’s capital openness affects foreign direct investment can help policymakers better understand how to attract (or reduce) foreign investment.
+In this project, we will be looking at the effect of various factors on GDP per capita.
+
+To do this, we will use the data from the World Bank (WDI) which includes, among other things, all of the countries' GDP per capita as well as some other variables of interest to us.
+
+We have chosen to look at the following variables:
+* gdppc - GDP per capita
+* wto - whether a country is a member of the World Trade Organization
+* fdi_per_gdp - Foreign Direct Investment as a Percentage of GDP
+* conflict - whether the country is in an armed conflict with any other country
+* conflict_intensity - intensity of armed conflict in the country
+* conflict_type - type of conflict
+
+The reason we are interested in these variables is because we would like to see which factors have the greatest impact on GDP. We would also like to see how the presence of armed conflict affects GDP per capita.
 
 ### Goal of Analysis
 
-Our questions of interest:
+Our question of interest:
 
 1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
-2.
 
 ### Data
 
@@ -28,61 +39,6 @@ Our questions of interest:
 **1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching. It is ok if your data did not require much of this.
 
 Our data includes yearly data across a variety of variables for 175 countries from 1970-2019. 
-
-| Variable Names     | Description                                                                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| country_name       | Country name                                                                                                                       |
-| COWcode            | Numerical code for country -- from Correlates of War Project                                                                       |
-| iso3c              | Alphabetical country code from ISO standard                                                                                        |
-| year               | Year of data                                                                                                                       |
-| fdi_flows          | Yearly net inflows of foreign direct investment                                                                                    |
-| fdi_per_gdp        | Yearly net inflows of foreign direct investment as percentage of GDP                                                               |
-| gdp                | Gross domestic product                                                                                                             |
-| gdppc              | Gross domestic product per capita                                                                                                  |
-| trade_dependence   | Total trade as percentage of GDP                                                                                                   |
-| inflation          | Inflation rate                                                                                                                     |
-| nat_resoc_rents    | Percentage of GDP derived from natural resources                                                                                   |
-| bits               | Number of bilateral investment traties in force in the country                                                                     |
-| wto                | Shows whether the country is a WTO member                                                                                          |
-| Polity             | Polity5 Democracy Index -- higher values == stronger democracy                                                                     |
-| v2x_polyarchy      | Electoral democracy index -- higher values == stronger democratic institutions                                                     |
-| v2x_rule           | Rule of law index -- higher values == stronger rule of law                                                                         |
-| v2x_gender         | Women's political empowerment index -- higher values == greater political empowerment for women                                    |
-| polcon             | Political Constraint Index (veto players) -- higher values indicate greater number of veto players                                 |
-| ka_open            | Measure of capital account openness -- higher values == greater integration with global financial markets                          |
-| alliance_US        | Shows whether the country is a member of the US alliance                                                                           |
-| alliance_RU        | Shows whether the country is a member of the RU alliance                                                                           |
-| conflict           | Shows whether the country is in an armed conflict with any other country                                                           |
-| conflict_intensity | Shows the intensity of armed conflict in the country (minor or major)                                                              |
-| conflict_type      | Shows the type of armed conflict in the country (no conflict, extrasystemic, interstate, intrastate, internationalized intrastate) |
-| physint            | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights           |
-
-```{r}
-library(dplyr)
-```
-
-```{r}
-fdi <- read.csv("fdi_data.csv")
-```
-
-#### Data cleaning process
-
-To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
-
-```{r}
-fdi$wto <- as.logical(fdi$wto)
-fdi$alliance_US <- as.logical(fdi$alliance_US)
-fdi$alliance_RU <- as.logical(fdi$alliance_RU)
-fdi$conflict <- as.logical(fdi$conflict)
-fdi$conflict_intensity <- ifelse(fdi$conflict_intensity == 1, "minor", "major")
-fdi$conflict_type[fdi$conflict_type == 0] <- "no conflict"
-fdi$conflict_type[fdi$conflict_type == 1] <- "extrasystemic"
-fdi$conflict_type[fdi$conflict_type == 2] <- "interstate"
-fdi$conflict_type[fdi$conflict_type == 3] <- "intrastate"
-fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"
-dim(fdi)
-head(fdi)
-```
 
 **1)  Data Cleaning**
 
