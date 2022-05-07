@@ -8,44 +8,19 @@ output:
   pdf_document: default
 ---
 
-### Introduction: Background and Motivation
+# Introduction: Background and Motivation
 
 In this project, we will be looking at the effect of various factors on GDP per capita.
 
-To do this, we will use the data from the World Bank (WDI) which includes, among other things, all of the countries' GDP per capita as well as some other variables of interest to us.
+To do this, we will use the data from the World Bank (WDI) which includes yearly data across a variety of variables for 175 countries from 1970-2019. We are primarily interested in GDP per capita and our question of interest: among the variables selected for analysis, which ones have the greatest correlation with gdp per capita? We would also like to see how variables, such as the presence of armed conflict, relates to GDP per capita.
+
+# Data Cleaning
+
+## Variable Names and Descriptions
 
 We have chosen to look at the following variables:
 
-- gdppc - GDP per capita
-- wto - whether a country is a member of the World Trade Organization
-- fdi_per_gdp - Foreign Direct Investment as a Percentage of GDP
-- conflict - whether the country is in an armed conflict with any other country
-- conflict_intensity - intensity of armed conflict in the country
-- conflict_type - type of conflict
-
-The reason we are interested in these variables is because we would like to see which factors have the greatest impact on GDP. We would also like to see how the presence of armed conflict affects GDP per capita.
-
-### Goal of Analysis
-
-Our question of interest:
-
-1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
-
-### Data
-
-#### List of Variables You Actually Use
-
-#### Data cleaning process
-
-**1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching. It is ok if your data did not require much of this.
-
-Our data includes yearly data across a variety of variables for 175 countries from 1970-2019.
-
-**1) Data Cleaning**
-
-_Variable Names and their Descriptions_
-
-Categorical variables:
+### Categorical variables:
 
 - conflict | Shows whether the country is in an armed conflict with any other country
   - Value of 1 indicates conflict
@@ -61,7 +36,7 @@ Categorical variables:
   - Value of 3 indicates intrastate conflict
   - Value of 4 indicates internationalized intrastate
 
-Continuous:
+### Continuous variables:
 
 - gdppc: Gross domestic product per capita (in USD)
 - trade_dependence: Total trade (imports + exports) as percentage of GDP
@@ -78,7 +53,7 @@ Continuous:
   - Value from 0 - 1
   - Measure of capital account openness -- higher values == greater integration with global financial markets
 
-#### Data cleaning process
+### Data cleaning process
 
 To start, looking at the variables conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these values to booleans/more descriptive values to make it easier to work with and understand the data.
 
@@ -102,22 +77,9 @@ dim(fdi_2019)
 head(fdi_2019)
 ```
 
-Variables we want to use:
-gdppc
-trade_dependence
+# Graphics
 
-wto
-
-Use the following to predict gdppc?
-
-- v2x_polyarchy
-- v2x_rule
-- v2x_gender
-- ka_open
-
-**2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
-scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
-residual plots, histogram.
+## Scatterplots
 
 ```{r}
 # create scatterplot of gdp per capita vs. democracy index in 2019
