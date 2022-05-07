@@ -237,7 +237,7 @@ bestSubsets <- regsubsets(gdppc ~ ., data=fdi_mr)
 (bestSubsetsSummary <- summary(bestSubsets))
 ```
 
-*We proceed by looking at the "which" matrix created using best subsets regression. According to the matrix, all variables should be included in the linear model.*
+*We proceed by looking at the "which" matrix created using best subsets regression. According to the matrix, all variables should be included in the model with the largest r-squared, hence a complete model.*
 
 ```{r}
 bestSubsetsSummary$which
@@ -247,7 +247,7 @@ lmGDPPC <- lm(gdppc ~ ., data = bsTemp)
 summary(lmGDPPC)
 ```
 
-*ka_open, i.e. openness to world trade, is the best predictor of GDP per capita, as shown by its low p-value of 5.56e-08. v2x_rule, i.e. transparency of law enforcement, is also a statistically significant decent predictor of GDP per capita, with a low p-value of 9.00e-05. However, v2x_polyarchy is not a statistically significant predictor of GDP per capita, with a high p-value of 0.411828.*
+*The chosen model is the complete model with all predictors. ka_open, i.e. openness to world trade, is the best predictor of GDP per capita, as shown by its low p-value of 5.56e-08. v2x_rule, i.e. transparency of law enforcement, is also a statistically significant decent predictor of GDP per capita, with a low p-value of 9.00e-05. However, v2x_polyarchy is not a statistically significant predictor of GDP per capita, with a high p-value of 0.411828.*
 
 ```{r}
 source("http://www.reuningscherer.net/s&ds230/Rfuncs/regJDRS.txt")
@@ -269,7 +269,7 @@ summary(lmGDPPC2)
 myResPlots2(lmGDPPC2)
 ```
 
-Much better. By taking a log transformation, the points in the normal quantile plot fall in roughly a straight line within the blue upper and lower bounds. Furthermore, the fits vs. studentized residuals plot does not show evidence of heteroskedasticity as the range of studentized residuals is about the same as fitted values increases. Looking at the best subsets results, the model with all variables is the most optimal. After the log transformation, it is still the case that ka_open and v2x_rule are statistically significant predictors of the log of GDP per capita, in this case with very low p-values of 5.47e-05 and 1.90e-09 respectively, whereas v2x_polyarchy is not a statistically significant predictor of log of GDP per capita. The positive coefficients for both v2x_rule and ka_open suggest that as rule of law becomes more transparent and as openness to world trade is higher, GDP per capita is expected to increase as well.
+*Much better. By taking a log transformation, the points in the normal quantile plot fall in roughly a straight line within the blue upper and lower bounds. Furthermore, the fits vs. studentized residuals plot does not show evidence of heteroskedasticity as the range of studentized residuals is about the same as fitted values increases. Looking at the best subsets results, the complete model with all predictors is the most optimal. After the log transformation, it is still the case that ka_open and v2x_rule are statistically significant predictors of the log of GDP per capita, in this case with very low p-values of 5.47e-05 and 1.90e-09 respectively, whereas v2x_polyarchy is not a statistically significant predictor of log of GDP per capita. The positive coefficients for both v2x_rule and ka_open suggest that as rule of law becomes more transparent and as openness to world trade is higher, GDP per capita is expected to increase as well.*
 
 **6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
 Regression, Multinomial Regression, OR data scraping off a website.
@@ -279,7 +279,7 @@ fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity")]
 fdi_anova <- fdi_anova[complete.cases(fdi_anova),]
 ```
 
-*For ANOVA, we decided to analyze whether there is a difference in mean GDP per capita among groups of countries separated by differing levels of conflict intensity. Conflict intensity is a categorical variable that represents the number of deaths as a result of armed conflict. conflict_intensity is 0 if there is no conflict, 1 if there are between 25 and 999 annual deaths, and 2 if there are 1000 or more.*
+*For ANOVA, we decided to analyze whether there is a difference in mean GDP per capita among groups of countries separated by differing levels of conflict intensity. Conflict intensity is a categorical variable that represents the number of deaths as a result of armed conflict. conflict_intensity is 0 (none) if there is no conflict, 1 (minor) if there are between 25 and 999 annual deaths, and 2 (major) if there are 1000 or more.*
 
 ```{r}
 boxplot(fdi_anova$gdppc ~ fdi_anova$conflict_intensity, main="GDP per Capita by Conflict Intensity", ylab="GDP per Capita", xlab="Conflict Intensity")
@@ -291,7 +291,7 @@ text(x = c(1:6), y = means + 90, labels = round(means,0))
 round(max(sds)/min(sds), 1)
 ```
 
-*First step is to see if the assumptions of normality within groups is met, and the ratio of the highest and lowest standard deviations among the groups is less than 2. From the visual information provided by the boxplots, the distribution of GDP per capita is definitely not normal for the conflict levels. There are way too many high outliers for each group. Furthermore, by visual inspection, the countries in conflict intensity level 0 seems to have more than twice the standard deviation of the countries in conflict intensity level 2. This is confirmed by calculating the ratio of highest to lowest standard deviation among groups, which is 6.9, which is much greater than 2. Hence, a transformation is necessary. We proceed with a transformation: taking the natural log of GDP per capita and using that in place of GDP per capita.*
+*First step is to see if the assumptions of normality within groups is met, and the ratio of the highest and lowest standard deviations among the groups is less than 2. From the visual information provided by the boxplots, the distribution of GDP per capita is definitely not normal for the conflict levels. There are way too many high outliers for each group. Furthermore, by visual inspection, the countries with no conflict seems to have more than twice the standard deviation of the countries with major conflict. This is confirmed by calculating the ratio of highest to lowest standard deviation among groups, which is 6.9, which is much greater than 2. Hence, a transformation is necessary. We proceed with a transformation: taking the natural log of GDP per capita and using that in place of GDP per capita.*
 
 ```{r}
 fdi_anova$log_gdppc <- log(fdi_anova$gdppc)
@@ -318,6 +318,14 @@ summary(aov1)
 myResPlots2(aov1, label = "Log of GDP per Capita")
 ```
 
-*With the log transformation, the points are approximately normally distributed as they fall on a line in the normal quantile plot. In addition the fits vs. residuals plots shows no evidence of heteroskedasticity, as the residuals are evenly distributed about 0 and there is no significant increase in spread as fitted values increases. Therefore, our ANOVA results are valid.*
+*With the log transformation, the points are approximately normally distributed as they fall on a line in the normal quantile plot. In addition the fits vs. residuals plots shows no evidence of heteroskedasticity, as the residuals are evenly distributed about 0 and there is no significant increase in spread as fitted values increases. Therefore, our ANOVA results are valid, and there is a statistically significant difference in log of GDP per capita among groups of countries with differing degrees of conflict.*
+
+```{r}
+TukeyHSD(aov1)
+par(mar=c(5, 11, 4, 1))
+plot(TukeyHSD(aov1), las=1)
+```
+
+*We proceed with a Tukey confidence interval plot. Based on the diagram above, there is a statistically significant difference in log of GDP per capita between countries with no conflict and major conflict, and countries with no conflict and minor conflict, as the confidence interval for the difference in means of those comparison groups does not intersect 0. There, however, is not a statistically significant difference between countries with minor and major conflict, as the confidence interval for the difference of means of minor-major intersects 0.*
 
 #### Conclusion and Summary
