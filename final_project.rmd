@@ -48,29 +48,17 @@ _Variable Names and their Descriptions_
 Categorical variables:
 
 - conflict | Shows whether the country is in an armed conflict with any other country
-
   - Value of 1 indicates conflict
-
   - Value of 0 indicates no conflict
-
 - conflict_intensity | Shows the intensity of armed conflict in the country
-
   - Value of 0 indicates no conflict
-
   - Value of 1 indicates minor conflict
-
   - Value of 2 indicates major conflict
-
 - conflict_type | Shows the type of conflict
-
   - Value of 0 indicates no conflict
-
   - Value of 1 indicates extrasystemic conflict
-
   - Value of 2 indicates interstate conflict
-
   - Value of 3 indicates intrastate conflict
-
   - Value of 4 indicates internationalized intrastate
 
 Continuous:
