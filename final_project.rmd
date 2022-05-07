@@ -191,12 +191,6 @@ mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
 abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
 ```
 
-```{r}
-#Calculate the correlation between Conflict Intensity and GDP per Capita
-(cor5 <- round(cor(fdi_2019$gdppc, fdi_2019$conflict_intensity, use = "pairwise.complete.obs"),3))
-```
-
-
 **4) Permutation Test** - include at least one.
 
 ```{r, echo=FALSE}
