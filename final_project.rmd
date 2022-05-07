@@ -104,12 +104,10 @@ plot(fdi_2019$gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democr
 title("GDP per capita vs. Democracy Index in 2019")
 
 # create scatterplot of gdp per capita vs. rule of law index in 2019
-
 plot(fdi_2019$gdppc, fdi_2019$v2x_rule, xlab="GDP per capita", ylab="Rule of Law Index")
 title("GDP per capita vs. Rule of Law Index in 2019")
 
 # create scatterplot of gdp per capita vs. women's policital empowerment in 2019
-
 plot(fdi_2019$gdppc, fdi_2019$v2x_gender, xlab="GDP per capita", ylab="Women's Political Empowerment Index")
 title("GDP per capita vs. Women's Political Empowerment Index in 2019")
 
