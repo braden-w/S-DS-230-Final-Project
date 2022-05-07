@@ -140,7 +140,7 @@ title("Log of GDP per capita vs. Women's Political Empowerment Index in 2019")
 plot(fdi_2019$log_gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Account Openness")
 title("Log of GDP per capita vs. Capital Account Openness in 2019")
 
-````
+```
 
 After logging the gdppc, it is a bit easier to see that there is a slight positive correlation with gdppc for the democracy index and the rule of law index. Plotting the GDP per capita with the women's empowerment index does not show a significant correlation in any way.
 
