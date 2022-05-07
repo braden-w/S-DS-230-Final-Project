@@ -94,7 +94,6 @@ Use the following to predict gdppc?
 - v2x_gender
 - ka_open
 
-
 **2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
 scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
 residual plots, histogram.
@@ -118,6 +117,7 @@ plot(fdi_2019$gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Acco
 title("GDP per capita vs. Capital Account Openness in 2019")
 
 ```
+
 This scatterplot does not convey a lot of useful information due to the outliers on the right side of the plot. To counteract this, we can replot this with the log of the GDP per capita.
 
 ```{r}
@@ -144,18 +144,35 @@ After logging the gdppc, it is a bit easier to see that there is a slight positi
 **3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
 either a t-test or a correlation.
 
+### Correlation
+
+We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.046.
+
+```{r, echo = FALSE}
+plot(jitter(fdi_2019$gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "gdppc", ylab = "fdi_per_gdp")
+mtext(paste("Correlation =", round(cor(fdi_2019$gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
+mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
+abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
+```
+
+```{r}
+#Calculate the correlation between Conflict Intensity and GDP per Capita
+(cor5 <- round(cor(fdi_2019$gdppc, fdi_2019$conflict_intensity, use = "pairwise.complete.obs"),3))
+```
+
+### T-Test
+
 Using a t-test, we analyzed if there was a difference in means between alliance_US and alliance_RU. We found that there was a significant difference in means between the two variables.
 
 ```{r}
-fdi_2019
 # Create a dataframe with just two columns for target variables
 gddpc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
 
 # Remove rows with missing values in any column of data frame
 gddpc_ttest_data<- gddpc_ttest_data[complete.cases(gddpc_ttest_data),]
 
-colnames(gddpc_ttest_data) <- c("Conflict", "GDP Per Capita")
-(ttest <- t.test(gddpc_ttest_data$"GDP Per Capita" ~ gddpc_ttest_data$"Conflict", conf.level = .99))
+colnames(gddpc_ttest_data) <- c("conflict", "gdppc")
+(ttest <- t.test(gddpc_ttest_data$gdppc ~ gddpc_ttest_data$conflict, conf.level = .99))
 ```
 
 Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
@@ -172,7 +189,7 @@ for (i in 1:N) {
                    sum(gddpc_ttest_data$conflict == TRUE), replace = TRUE))
 }
 qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
-paste0("The 95% bootstrapped confidence interval for countries with conflict is (", qLeft[1], ", ", qLeft[2], ")")
+paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with armed conflict is (", qLeft[1], ", ", qLeft[2], ")")
 
 bottstrapped_no_conflict <- rep(NA, N)
 for (i in 1:N) {
@@ -180,10 +197,10 @@ for (i in 1:N) {
                    sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
 }
 qRight <- quantile(bottstrapped_no_conflict, c(0.025, 0.975))
-paste0("The 95% bootstrapped confidence interval for countries with conflict is (", qRight[1], ", ", qRight[2], ")")
+paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with no armed conflict is (", qRight[1], ", ", qRight[2], ")")
 ```
 
-The bootstrapped CIs indicate the same conclusion the t-test made which is that there is not a significant difference between the Environmental Composite Score for individuals on the "Left" and "Right."
+The bootstrapped CIs indicate the same conclusion the t-test made which is that there is a significant difference in GDP per Capita between countries that are in armed conflicts versus those that are not.
 
 **4) Permutation Test** - include at least one.
 
