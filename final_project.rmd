@@ -15,49 +15,48 @@ Understanding whether or not a country’s capital openness affects foreign dire
 ### Goal of Analysis
 
 Our questions of interest:
+
 1. Among the variables selected for analysis, which ones have the greatest influence on gdp per capita?
-2. 
+2.
 
 ### Data
-
 
 #### List of Variables You Actually Use
 
 #### Data cleaning process
 
+**1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching. It is ok if your data did not require much of this.
 
-**1)  Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching.  It is ok if your data did not require much of this.
-
-Variable Names | Description
-----------------|------------
-country_name | Country name
-COWcode | Numerical code for country -- from Correlates of War Project
-iso3c | Alphabetical country code from ISO standard
-year | Year of data
-fdi_flows | Yearly net inflows of foreign direct investment
-fdi_per_gdp | Yearly net inflows of foreign direct investment as percentage of GDP
-gdp | Gross domestic product
-gdppc | Gross domestic product per capita
-trade_dependence | Total trade as percentage of GDP
-inflation | Inflation rate
-nat_resoc_rents | Percentage of GDP derived from natural resources
-bits | Number of bilateral investment traties in force in the country
-wto | Shows whether the country is a WTO member
-Polity | Polity5 Democracy Index -- higher values == stronger democracy
-v2x_polyarchy | Electoral democracy index -- higher values == stronger democratic institutions
-v2x_rule | Rule of law index -- higher values == stronger rule of law
-v2x_gender | Women's political empowerment index -- higher values == greater political empowerment for women
-polcon | Political Constraint Index (veto players) -- higher values indicate greater number of veto players
-ka_open | Measure of capital account openness -- higher values == greater integration with global financial markets
-alliance_US | Shows whether the country is a member of the US alliance
-alliance_RU | Shows whether the country is a member of the RU alliance
-conflict | Shows whether the country is in an armed conflict with any other country
-conflict_intensity | Shows the intensity of armed conflict in the country (minor or major)
-conflict_type | Shows the type of armed conflict in the country (no conflict, extrasystemic, interstate, intrastate, internationalized intrastate)
-physint | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights
-
+| Variable Names     | Description                                                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| country_name       | Country name                                                                                                                       |
+| COWcode            | Numerical code for country -- from Correlates of War Project                                                                       |
+| iso3c              | Alphabetical country code from ISO standard                                                                                        |
+| year               | Year of data                                                                                                                       |
+| fdi_flows          | Yearly net inflows of foreign direct investment                                                                                    |
+| fdi_per_gdp        | Yearly net inflows of foreign direct investment as percentage of GDP                                                               |
+| gdp                | Gross domestic product                                                                                                             |
+| gdppc              | Gross domestic product per capita                                                                                                  |
+| trade_dependence   | Total trade as percentage of GDP                                                                                                   |
+| inflation          | Inflation rate                                                                                                                     |
+| nat_resoc_rents    | Percentage of GDP derived from natural resources                                                                                   |
+| bits               | Number of bilateral investment traties in force in the country                                                                     |
+| wto                | Shows whether the country is a WTO member                                                                                          |
+| Polity             | Polity5 Democracy Index -- higher values == stronger democracy                                                                     |
+| v2x_polyarchy      | Electoral democracy index -- higher values == stronger democratic institutions                                                     |
+| v2x_rule           | Rule of law index -- higher values == stronger rule of law                                                                         |
+| v2x_gender         | Women's political empowerment index -- higher values == greater political empowerment for women                                    |
+| polcon             | Political Constraint Index (veto players) -- higher values indicate greater number of veto players                                 |
+| ka_open            | Measure of capital account openness -- higher values == greater integration with global financial markets                          |
+| alliance_US        | Shows whether the country is a member of the US alliance                                                                           |
+| alliance_RU        | Shows whether the country is a member of the RU alliance                                                                           |
+| conflict           | Shows whether the country is in an armed conflict with any other country                                                           |
+| conflict_intensity | Shows the intensity of armed conflict in the country (minor or major)                                                              |
+| conflict_type      | Shows the type of armed conflict in the country (no conflict, extrasystemic, interstate, intrastate, internationalized intrastate) |
+| physint            | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights           |
 
 #### Data cleaning process
+
 To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
 
 ```{r}
@@ -70,22 +69,21 @@ fdi$conflict_type[fdi$conflict_type == 0] <- "no conflict"
 fdi$conflict_type[fdi$conflict_type == 1] <- "extrasystemic"
 fdi$conflict_type[fdi$conflict_type == 2] <- "interstate"
 fdi$conflict_type[fdi$conflict_type == 3] <- "intrastate"
-fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"  
+fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"
 ```
 
-Variables we want to use: 
+Variables we want to use:
 gdppc
 trade_dependence
 
 wto
 
 Use the following to predict gdppc?
-- polity
+
 - v2x_polyarchy
 - v2x_rule
 - v2x_gender
 - ka_open
-
 
 ```{r}
 fdi <- read.csv("fdi_data.csv")
@@ -96,8 +94,8 @@ dim(fdi_2019)
 head(fdi_2019)
 ```
 
-**2)  Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot, 
-scatterplot (can be matrix plot), normal quantile plot (can be related to regression), 
+**2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
+scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
 residual plots, histogram.
 
 ```{r}
@@ -105,6 +103,7 @@ residual plots, histogram.
 plot(fdi_2019$gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
 title("GDP per capita vs. Democracy Index in 2019")
 ```
+
 This scatterplot does not convey a lot of useful information due to the outliers on the right side of the plot. To counteract this, we can replot this with the log of the GDP per capita.
 
 ```{r}
@@ -113,30 +112,56 @@ plot(log(fdi_2019$gdppc), fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="D
 title("Log of GDP per capita vs. Democracy Index in 2019")
 ```
 
-**3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
+**3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
 either a t-test or a correlation.
 
 Using a t-test, we analyzed if there was a difference in means between alliance_US and alliance_RU. We found that there was a significant difference in means between the two variables.
 
-
 ```{r}
 # Create a dataframe with just two columns for target variables
-gddpc_ttest_data <- data.frame(fdi$alliance_US, fdi$gdppc)
+gddpc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
 
 # Remove rows with missing values in any column of data frame
 gddpc_ttest_data<- gddpc_ttest_data[complete.cases(gddpc_ttest_data),]
 
-colnames(gddpc_ttest_data) <- c("Alliance with US", "GDP Per Capita")
-(ttest <- t.test(gddpc_ttest_data$"GDP Per Capita" ~ gddpc_ttest_data$"Alliance with US", conf.level = .99))
+colnames(gddpc_ttest_data) <- c("Conflict", "GDP Per Capita")
+(ttest <- t.test(gddpc_ttest_data$"GDP Per Capita" ~ gddpc_ttest_data$"Conflict", conf.level = .99))
 ```
 
-**4)  Permutation Test** - include at least one.
+Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
 
-**5)  Multiple Regression** - use either backwards stepwise regression or some form of best 
-subsets regression.  Should include residual plots.  A GLM with a mix of continuous and 
+We then performed a bootstrapped 95% confidence interval:
+
+```{r, echo=FALSE}
+set.seed(230)
+
+N <- 10000
+bootstrapped_conflict <- rep(NA, N)
+for (i in 1:N) {
+  bootstrapped_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE],
+                   sum(gddpc_ttest_data$conflict == TRUE), replace = TRUE))
+}
+qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
+paste0("The 95% bootstrapped confidence interval for countries with conflict is (", qLeft[1], ", ", qLeft[2], ")")
+
+bottstrapped_no_conflict <- rep(NA, N)
+for (i in 1:N) {
+  bottstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
+                   sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
+}
+qRight <- quantile(bottstrapped_no_conflict, c(0.025, 0.975))
+paste0("The 95% bootstrapped confidence interval for countries with conflict is (", qRight[1], ", ", qRight[2], ")")
+```
+
+The bootstrapped CIs indicate the same conclusion the t-test made which is that there is not a significant difference between the Environmental Composite Score for individuals on the "Left" and "Right."
+
+**4) Permutation Test** - include at least one.
+
+**5) Multiple Regression** - use either backwards stepwise regression or some form of best
+subsets regression. Should include residual plots. A GLM with a mix of continuous and
 categorical predictors is fine here.
 
-**6)  AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic 
+**6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
@@ -145,4 +170,4 @@ fdi_anova <- fdi_anova[complete.cases(fdi_anova),]
 
 ```
 
-####  Conclusion and Summary
+#### Conclusion and Summary
