@@ -27,6 +27,8 @@ Our questions of interest:
 
 **1) Data Cleaning** - demonstrate use of find/replace, data cleaning, dealing with missing values, text character replacement, matching. It is ok if your data did not require much of this.
 
+Our data includes yearly data across a variety of variables for 175 countries from 1970-2019. 
+
 | Variable Names     | Description                                                                                                                        |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
 | country_name       | Country name                                                                                                                       |
@@ -56,6 +58,10 @@ Our questions of interest:
 | physint            | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights           |
 
 ```{r}
+library(dplyr)
+```
+
+```{r}
 fdi <- read.csv("fdi_data.csv")
 ```
 
@@ -76,6 +82,89 @@ fdi$conflict_type[fdi$conflict_type == 3] <- "intrastate"
 fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"
 dim(fdi)
 head(fdi)
+```
+
+**1)  Data Cleaning**
+
+*Variable Names and their Descriptions*
+
+Categorical variables:
+
+* conflict | Shows whether the country is in an armed conflict with any other country 
+
+  * Value of 1 indicates conflict
+  
+  * Value of 0 indicates no conflict
+
+* conflict_intensity | Shows the intensity of armed conflict in the country
+
+  * Value of 0 indicates no conflict
+  
+  * Value of 1 indicates minor conflict
+  
+  * Value of 2 indicates major conflict
+  
+* conflict_type | Shows the type of conflict
+
+  * Value of 0 indicates no conflict
+  
+  * Value of 1 indicates extrasystemic conflict
+  
+  * Value of 2 indicates interstate conflict
+  
+  * Value of 3 indicates intrastate conflict
+  
+  * Value of 4 indicates internationalized intrastate
+  
+Continuous:
+
+* gdppc: Gross domestic product per capita (in USD)
+
+* trade_dependence: Total trade (imports + exports) as percentage of GDP
+
+* v2x_polyarchy
+
+  * Value from 0 - 1
+  
+  * Electoral democracy index where higher values == stronger democratic institutions
+
+* v2x_rule
+
+  * Value from 0 - 1
+  
+  * Rule of law index -- measures extent to which laws are fairly enforced -- higher values == stronger rule of law
+
+* v2x_gender: 
+
+  * Value from 0 - 1 
+  
+  * Women's political empowerment index -- higher values == greater political empowerment for women
+
+* ka_open: 
+
+  * Value from 0 - 1
+  
+  * Measure of capital account openness -- higher values == greater integration with global financial markets
+
+
+#### Data cleaning process
+
+To start, looking at the variables conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these values to booleans/more descriptive values to make it easier to work with and understand the data.
+
+```{r}
+fdi$conflict <- as.logical(fdi$conflict)
+fdi$conflict_intensity[fdi$conflict_intensity == 0] <- "None"
+fdi$conflict_intensity[fdi$conflict_intensity == 1] <- "Minor"
+fdi$conflict_intensity[fdi$conflict_intensity == 2] <- "Major"
+fdi$conflict_type[fdi$conflict_type == 0] <- "No conflict"
+fdi$conflict_type[fdi$conflict_type == 1] <- "Extrasystemic"
+fdi$conflict_type[fdi$conflict_type == 2] <- "Interstate"
+fdi$conflict_type[fdi$conflict_type == 3] <- "Intrastate"
+fdi$conflict_type[fdi$conflict_type == 4] <- "Internationalized intrastate"  
+```
+
+To further narrow down our data for this project, we will only be looking at data from countries in 2019. 
+```{r}
 fdi_2019 <- fdi[fdi$year == 2019,]
 dim(fdi_2019)
 head(fdi_2019)
