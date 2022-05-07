@@ -3,9 +3,9 @@ title: "Final Project"
 author: "S&DS 230/S&DS 530/ENV 757/PLSC 530"
 subtitle: Due by 11:59am, Saturday, May 7, 2022
 output:
-  html_document: default
-  word_document: default
   pdf_document: default
+  word_document: default
+  html_document: default
 ---
 
 # Introduction: Background and Motivation
@@ -13,6 +13,12 @@ output:
 In this project, we will be looking at the effect of various factors on GDP per capita.
 
 To do this, we will use the data from the World Bank (WDI) which includes yearly data across a variety of variables for 175 countries from 1970-2019. We are primarily interested in GDP per capita and our question of interest: among the variables selected for analysis, which ones have the greatest correlation with gdp per capita? We would also like to see how variables, such as the presence of armed conflict, relates to GDP per capita.
+
+```{r}
+fdi <- read.csv("fdi_data.csv")
+dim(fdi)
+head(fdi)
+```
 
 # Data Cleaning
 
@@ -124,25 +130,24 @@ title("Log of GDP per capita vs. Capital Account Openness in 2019")
 
 After logging the gdppc, it is a bit easier to see that there is a slight positive correlation with gdppc for the democracy index and the rule of law index. Plotting the GDP per capita with the women's empowerment index does not show a significant correlation in any way.
 
-**3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
-either a t-test or a correlation.
-
 # T-Test
 
 Using a t-test, we analyzed if there was a difference in means between countries that were in armed conflict and those which were not. We found that there was a significant difference in means between the two variables.
 
 ```{r}
 # Create a dataframe with just two columns for target variables
-gddpc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
+gdppc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$log_gdppc)
 
 # Remove rows with missing values in any column of data frame
-gddpc_ttest_data<- gddpc_ttest_data[complete.cases(gddpc_ttest_data),]
+gdppc_ttest_data<- gdppc_ttest_data[complete.cases(gdppc_ttest_data),]
 
-colnames(gddpc_ttest_data) <- c("conflict", "gdppc")
-(ttest <- t.test(gddpc_ttest_data$gdppc ~ gddpc_ttest_data$conflict, conf.level = .99))
+colnames(gdppc_ttest_data) <- c("conflict", "log_gdppc")
+(ttest <- t.test(gdppc_ttest_data$log_gdppc ~ gdppc_ttest_data$conflict, conf.level = .99))
 ```
 
 Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
+
+# Bootstrap
 
 We then performed a bootstrapped 95% confidence interval:
 
@@ -152,16 +157,16 @@ set.seed(230)
 N <- 10000
 bootstrapped_conflict <- rep(NA, N)
 for (i in 1:N) {
-  bootstrapped_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE],
-                   sum(gddpc_ttest_data$conflict == TRUE), replace = TRUE))
+  bootstrapped_conflict[i] <- mean(sample(gdppc_ttest_data$log_gdppc[gdppc_ttest_data$conflict == TRUE],
+                   sum(gdppc_ttest_data$conflict == TRUE), replace = TRUE))
 }
 qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with armed conflict is (", qLeft[1], ", ", qLeft[2], ")")
 
 bootstrapped_no_conflict <- rep(NA, N)
 for (i in 1:N) {
-  bootstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
-                   sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
+  bootstrapped_no_conflict[i] <- mean(sample(gdppc_ttest_data$log_gdppc[gdppc_ttest_data$conflict == FALSE],
+                   sum(gdppc_ttest_data$conflict == FALSE), replace = TRUE))
 }
 qRight <- quantile(bootstrapped_no_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with no armed conflict is (", qRight[1], ", ", qRight[2], ")")
@@ -182,16 +187,16 @@ The bootstrapped CIs and histograms indicate the same conclusion as the t-test, 
 
 # Correlation
 
-We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.046.
+We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.09.
 
 ```{r, echo = FALSE}
-plot(jitter(fdi_2019$gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "gdppc", ylab = "fdi_per_gdp")
-mtext(paste("Correlation =", round(cor(fdi_2019$gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
-mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
-abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
+plot(jitter(fdi_2019$log_gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "log_gdppc", ylab = "fdi_per_gdp")
+mtext(paste("Correlation =", round(cor(fdi_2019$log_gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
+mtext("log_gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
+abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$log_gdppc), col = "orange")
 ```
 
-**4) Permutation Test** - include at least one.
+# Permutation Test
 
 ```{r, echo=FALSE}
 set.seed(230)
@@ -199,37 +204,35 @@ set.seed(230)
 N <- 10000
 diffvals <- rep(NA, N)
 for (i in 1:N) {
-  fakeconflict <- sample(gddpc_ttest_data$conflict)
-  diffvals[i] <- mean(gddpc_ttest_data$gdppc[fakeconflict == TRUE]) -
-    mean(gddpc_ttest_data$gdppc[fakeconflict == FALSE])
+  fakeconflict <- sample(gdppc_ttest_data$conflict)
+  diffvals[i] <- mean(gdppc_ttest_data$log_gdppc[fakeconflict == TRUE]) -
+    mean(gdppc_ttest_data$log_gdppc[fakeconflict == FALSE])
 }
 
-actualdiff <- mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE])  -
-  mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE])
+actualdiff <- mean(gdppc_ttest_data$log_gdppc[gdppc_ttest_data$conflict == TRUE])  -
+  mean(gdppc_ttest_data$log_gdppc[gdppc_ttest_data$conflict == FALSE])
 
 hist(diffvals,
      col = "yellow",
-     main = "Permuted Sample Mean Diff in gdppc by Conflict Status",
-     xlab = "Difference in gdppc",
-     breaks = 50)
+     main = "Permuted Sample Mean Diff in log_gdppc by Conflict Status",
+     xlab = "Difference in log_gdppc",
+     breaks = 50, xlim=c(-1.5, 1.0))
 abline(v = actualdiff, col = "blue", lwd = 3)
-text(actualdiff-.01, 300, paste("Actual Diff in Means =", round(actualdiff, 4)), srt = 90)
+text(actualdiff-.05, 300, paste("Actual Diff in Means =", round(actualdiff, 4)), srt = 90)
 
 paste("P-value:", mean(abs(diffvals) >= abs(actualdiff)))
 ```
 
-The permuted sample mean difference in gdppc by party group suggests that the difference in the sample mean is approximately 0. The p-value of 0.005 suggests that we reject the null hypothesis and conclude that the mean improvement in gdppc between groups is statistically significantly different.
+The permuted sample mean difference in log_gdppc by conflict status suggests that the difference in the sample mean is approximately -1.306. The incredibly low p-value that approaches 0.0 suggests that we reject the null hypothesis and conclude that the mean improvement in log_gdppc between groups is statistically significantly different.
 
-**5) Multiple Regression** - use either backwards stepwise regression or some form of best
-subsets regression. Should include residual plots. A GLM with a mix of continuous and
-categorical predictors is fine here.
+# Multiple Regression
 
 ```{r}
 fdi_mr <- fdi_2019[c("gdppc", "v2x_polyarchy", "v2x_rule", "ka_open")]
 fdi_mr <- fdi_mr[complete.cases(fdi_mr),]
 ```
 
-*For multiple regression, we focused on predicting GDP per capita based on the following social indices: wto, v2x_polyarchy, v2x_rule, and ka_open, all of which are continuous variables ranging from 0 to 1. v2x_polyarchy represents how democratic a country is, with lower values meaning less democratic. v2x_rule represents how transparently laws are enforced, with lower values being less transparent. ka_open represents how open the state's capital accounts are, with lower values representing a less open economy to world trade.*
+_For multiple regression, we focused on predicting GDP per capita based on the following social indices: wto, v2x_polyarchy, v2x_rule, and ka_open, all of which are continuous variables ranging from 0 to 1. v2x_polyarchy represents how democratic a country is, with lower values meaning less democratic. v2x_rule represents how transparently laws are enforced, with lower values being less transparent. ka_open represents how open the state's capital accounts are, with lower values representing a less open economy to world trade._
 
 ```{r}
 library(leaps)
@@ -254,7 +257,7 @@ source("http://www.reuningscherer.net/s&ds230/Rfuncs/regJDRS.txt")
 myResPlots2(lmGDPPC)
 ```
 
-*The next step is to check if the conditions for normality and low heteroskedasticity are met. By creating the normal quantile plot of studentized residuals, it is evident that the conditions for normality are not met due to the presence of high outliers. Furthermore, there is high heteroskedasticity as when fitted values increases, there is a greater spread in the studentized residuals. Thus we must take a log transformation of GDP per capita and redo the previous steps.*
+_The next step is to check if the conditions for normality and low heteroskedasticity are met. By creating the normal quantile plot of studentized residuals, it is evident that the conditions for normality are not met due to the presence of high outliers. Furthermore, there is high heteroskedasticity as when fitted values increases, there is a greater spread in the studentized residuals. Thus we must take a log transformation of GDP per capita and redo the previous steps._
 
 ```{r}
 fdi_mr$log_gdppc <- log(fdi_mr$gdppc)
@@ -271,8 +274,7 @@ myResPlots2(lmGDPPC2)
 
 *Much better. By taking a log transformation, the points in the normal quantile plot fall in roughly a straight line within the blue upper and lower bounds. Furthermore, the fits vs. studentized residuals plot does not show evidence of heteroskedasticity as the range of studentized residuals is about the same as fitted values increases. Looking at the best subsets results, the complete model with all predictors is the most optimal. After the log transformation, it is still the case that ka_open and v2x_rule are statistically significant predictors of the log of GDP per capita, in this case with very low p-values of 5.47e-05 and 1.90e-09 respectively, whereas v2x_polyarchy is not a statistically significant predictor of log of GDP per capita. The positive coefficients for both v2x_rule and ka_open suggest that as rule of law becomes more transparent and as openness to world trade is higher, GDP per capita is expected to increase as well.*
 
-**6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
-Regression, Multinomial Regression, OR data scraping off a website.
+# ANOVA
 
 ```{r}
 fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity")]
@@ -305,14 +307,14 @@ text(x = c(1:6), y = means + 90, labels = round(means,0))
 round(max(sds)/min(sds), 1)
 ```
 
-*Much better. The ratio of highest to lowest standard deviation is 1.1, which is less than 2. Also, the groups seem to be normally distributed by looking at the boxplots. We proceed with ANOVA.*
+_Much better. The ratio of highest to lowest standard deviation is 1.1, which is less than 2. Also, the groups seem to be normally distributed by looking at the boxplots. We proceed with ANOVA._
 
 ```{r}
 (aov1 <- aov(fdi_anova$log_gdppc ~ fdi_anova$conflict_intensity))
 summary(aov1)
 ```
 
-*The log of GDP per capita is statistically significantly different across conflict intensity groups, as evidenced by the extremely low p-value of 1.71e-06 of ANOVA.*
+_The log of GDP per capita is statistically significantly different across conflict intensity groups, as evidenced by the extremely low p-value of 1.71e-06 of ANOVA._
 
 ```{r}
 myResPlots2(aov1, label = "Log of GDP per Capita")
@@ -328,4 +330,4 @@ plot(TukeyHSD(aov1), las=1)
 
 *We proceed with a Tukey confidence interval plot. Based on the diagram above, there is a statistically significant difference in log of GDP per capita between countries with no conflict and major conflict, and countries with no conflict and minor conflict, as the confidence interval for the difference in means of those comparison groups does not intersect 0. There, however, is not a statistically significant difference between countries with minor and major conflict, as the confidence interval for the difference of means of minor-major intersects 0.*
 
-#### Conclusion and Summary
+# Conclusion and Summary
