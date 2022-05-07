@@ -3,9 +3,9 @@ title: "Final Project"
 author: "S&DS 230/S&DS 530/ENV 757/PLSC 530"
 subtitle: Due by 11:59am, Saturday, May 7, 2022
 output:
-  html_document: default
-  word_document: default
   pdf_document: default
+  word_document: default
+  html_document: default
 ---
 
 # Introduction: Background and Motivation
@@ -13,6 +13,13 @@ output:
 In this project, we will be looking at the effect of various factors on GDP per capita.
 
 To do this, we will use the data from the World Bank (WDI) which includes yearly data across a variety of variables for 175 countries from 1970-2019. We are primarily interested in GDP per capita and our question of interest: among the variables selected for analysis, which ones have the greatest correlation with gdp per capita? We would also like to see how variables, such as the presence of armed conflict, relates to GDP per capita.
+
+```{r}
+fdi <- read.csv("fdi_data.csv")
+dim(fdi)
+head(fdi)
+```
+
 
 # Data Cleaning
 
@@ -133,13 +140,13 @@ Using a t-test, we analyzed if there was a difference in means between countries
 
 ```{r}
 # Create a dataframe with just two columns for target variables
-gddpc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
+gdppc_ttest_data <- data.frame(fdi_2019$conflict, fdi_2019$gdppc)
 
 # Remove rows with missing values in any column of data frame
-gddpc_ttest_data<- gddpc_ttest_data[complete.cases(gddpc_ttest_data),]
+gdppc_ttest_data<- gdppc_ttest_data[complete.cases(gdppc_ttest_data),]
 
-colnames(gddpc_ttest_data) <- c("conflict", "gdppc")
-(ttest <- t.test(gddpc_ttest_data$gdppc ~ gddpc_ttest_data$conflict, conf.level = .99))
+colnames(gdppc_ttest_data) <- c("conflict", "gdppc")
+(ttest <- t.test(gdppc_ttest_data$gdppc ~ gdppc_ttest_data$conflict, conf.level = .99))
 ```
 
 Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
@@ -152,16 +159,16 @@ set.seed(230)
 N <- 10000
 bootstrapped_conflict <- rep(NA, N)
 for (i in 1:N) {
-  bootstrapped_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE],
-                   sum(gddpc_ttest_data$conflict == TRUE), replace = TRUE))
+  bootstrapped_conflict[i] <- mean(sample(gdppc_ttest_data$gdppc[gdppc_ttest_data$conflict == TRUE],
+                   sum(gdppc_ttest_data$conflict == TRUE), replace = TRUE))
 }
 qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with armed conflict is (", qLeft[1], ", ", qLeft[2], ")")
 
 bootstrapped_no_conflict <- rep(NA, N)
 for (i in 1:N) {
-  bootstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
-                   sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
+  bootstrapped_no_conflict[i] <- mean(sample(gdppc_ttest_data$gdppc[gdppc_ttest_data$conflict == FALSE],
+                   sum(gdppc_ttest_data$conflict == FALSE), replace = TRUE))
 }
 qRight <- quantile(bootstrapped_no_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with no armed conflict is (", qRight[1], ", ", qRight[2], ")")
@@ -199,13 +206,13 @@ set.seed(230)
 N <- 10000
 diffvals <- rep(NA, N)
 for (i in 1:N) {
-  fakeconflict <- sample(gddpc_ttest_data$conflict)
-  diffvals[i] <- mean(gddpc_ttest_data$gdppc[fakeconflict == TRUE]) -
-    mean(gddpc_ttest_data$gdppc[fakeconflict == FALSE])
+  fakeconflict <- sample(gdppc_ttest_data$conflict)
+  diffvals[i] <- mean(gdppc_ttest_data$gdppc[fakeconflict == TRUE]) -
+    mean(gdppc_ttest_data$gdppc[fakeconflict == FALSE])
 }
 
-actualdiff <- mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE])  -
-  mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE])
+actualdiff <- mean(gdppc_ttest_data$gdppc[gdppc_ttest_data$conflict == TRUE])  -
+  mean(gdppc_ttest_data$gdppc[gdppc_ttest_data$conflict == FALSE])
 
 hist(diffvals,
      col = "yellow",
