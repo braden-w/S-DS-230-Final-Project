@@ -104,14 +104,42 @@ residual plots, histogram.
 # create scatterplot of gdp per capita vs. democracy index in 2019
 plot(fdi_2019$gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
 title("GDP per capita vs. Democracy Index in 2019")
+
+# create scatterplot of gdp per capita vs. rule of law index in 2019
+plot(fdi_2019$gdppc, fdi_2019$v2x_rule, xlab="GDP per capita", ylab="Rule of Law Index")
+title("GDP per capita vs. Rule of Law Index in 2019")
+
+# create scatterplot of gdp per capita vs. women's policital empowerment in 2019
+plot(fdi_2019$gdppc, fdi_2019$v2x_gender, xlab="GDP per capita", ylab="Women's Political Empowerment Index")
+title("GDP per capita vs. Women's Political Empowerment Index in 2019")
+
+# create scatterplot of gdp per capita vs. measure of capital account openness
+plot(fdi_2019$gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Account Openness")
+title("GDP per capita vs. Capital Account Openness in 2019")
 ```
 This scatterplot does not convey a lot of useful information due to the outliers on the right side of the plot. To counteract this, we can replot this with the log of the GDP per capita.
 
 ```{r}
+fdi_2019$log_gdppc <- log(fdi_2019$gdppc)
 # create scatterplot of gdp per capita vs. democracy index in 2019
-plot(log(fdi_2019$gdppc), fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_polyarchy, xlab="GDP per capita", ylab="Democracy Index")
 title("Log of GDP per capita vs. Democracy Index in 2019")
+
+# create scatterplot of gdp per capita vs. rule of law index in 2019
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_rule, xlab="GDP per capita", ylab="Rule of Law Index")
+title("Log of GDP per capita vs. Rule of Law Index in 2019")
+
+# create scatterplot of gdp per capita vs. women's policital empowerment in 2019
+plot(fdi_2019$log_gdppc, fdi_2019$v2x_gender, xlab="GDP per capita", ylab="Women's Political Empowerment Index")
+title("Log of GDP per capita vs. Women's Political Empowerment Index in 2019")
+
+# create scatterplot of gdp per capita vs. measure of capital account openness
+plot(fdi_2019$log_gdppc, fdi_2019$ka_open, xlab="GDP per capita", ylab="Capital Account Openness")
+title("Log of GDP per capita vs. Capital Account Openness in 2019")
+
 ```
+
+After logging the gdppc, it is a bit easier to see that there is a slight positive correlation with gdppc for the democracy index and the rule of law index. Plotting the GDP per capita with the women's empowerment index does not show a significant correlation in any way.
 
 **3)  Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for 
 either a t-test or a correlation.
