@@ -204,6 +204,33 @@ The bootstrapped CIs indicate the same conclusion the t-test made which is that 
 
 **4) Permutation Test** - include at least one.
 
+```{r, echo=FALSE}
+set.seed(230)
+
+N <- 10000
+diffvals <- rep(NA, N)
+for (i in 1:N) {
+  fakeconflict <- sample(gddpc_ttest_data$conflict)
+  diffvals[i] <- mean(gddpc_ttest_data$gdppc[fakeconflict == TRUE]) -
+    mean(gddpc_ttest_data$gdppc[fakeconflict == FALSE])
+}
+
+actualdiff <- mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == TRUE])  -
+  mean(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE])
+
+hist(diffvals,
+     col = "yellow",
+     main = "Permuted Sample Mean Diff in gdppc by conflict status",
+     xlab = "Difference in gdppc",
+     breaks = 50)
+abline(v = actualdiff, col = "blue", lwd = 3)
+text(actualdiff-.01, 300, paste("Actual Diff in Means =", round(actualdiff, 4)), srt = 90)
+
+paste("P-value:", mean(abs(diffvals) >= abs(actualdiff)))
+```
+
+The permuted sample mean difference in gdppc by party group suggests that the difference in the sample mean is approximately 0. The p-value of 0.7405 suggests that we fail to reject the null hypothesis and that at a significance level of 0.05 we conclude that the mean improvement in runtimes is not statistically significantly different between political groups.
+
 **5) Multiple Regression** - use either backwards stepwise regression or some form of best
 subsets regression. Should include residual plots. A GLM with a mix of continuous and
 categorical predictors is fine here.
