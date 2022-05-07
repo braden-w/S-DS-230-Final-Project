@@ -53,13 +53,14 @@ colnames(fdi)
 ```
 
 ### Data Cleaning
-To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will need to convert these variables to categorical variables to make it easier to work with and understand the data.
+To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
 
 ```{r}
 fdi$wto <- as.logical(fdi$wto)
 fdi$alliance_US <- as.logical(fdi$alliance_US)
 fdi$alliance_RU <- as.logical(fdi$alliance_RU)
 fdi$conflict <- as.logical(fdi$conflict)
+fdi$conflict_intensity <- ifelse(fdi$conflict_intensity == 1, "minor", "major")
 ```
 ### Key Variables
 
