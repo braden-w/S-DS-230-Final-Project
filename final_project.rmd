@@ -230,13 +230,100 @@ The permuted sample mean difference in gdppc by party group suggests that the di
 subsets regression. Should include residual plots. A GLM with a mix of continuous and
 categorical predictors is fine here.
 
+```{r}
+fdi_mr <- fdi_2019[c("gdppc", "v2x_polyarchy", "v2x_rule", "ka_open")]
+fdi_mr <- fdi_mr[complete.cases(fdi_mr),]
+```
+
+*For multiple regression, we focused on predicting GDP per capita based on the following social indices: wto, v2x_polyarchy, v2x_rule, and ka_open, all of which are continuous variables ranging from 0 to 1. v2x_polyarchy represents how democratic a country is, with lower values meaning less democratic. v2x_rule represents how transparently laws are enforced, with lower values being less transparent. ka_open represents how open the state's capital accounts are, with lower values representing a less open economy to world trade.*
+
+```{r}
+library(leaps)
+bestSubsets <- regsubsets(gdppc ~ ., data=fdi_mr)
+(bestSubsetsSummary <- summary(bestSubsets))
+```
+
+*We proceed by looking at the "which" matrix created using best subsets regression. According to the matrix, all variables should be included in the linear model.*
+
+```{r}
+bestSubsetsSummary$which
+which.max(bestSubsetsSummary$rsq)
+bsTemp <- fdi_mr[, bestSubsetsSummary$which[which.max(bestSubsetsSummary$rsq),]]
+lmGDPPC <- lm(gdppc ~ ., data = bsTemp)
+summary(lmGDPPC)
+```
+
+*ka_open, i.e. openness to world trade, is the best predictor of GDP per capita, as shown by its low p-value of 5.56e-08. v2x_rule, i.e. transparency of law enforcement, is also a statistically significant decent predictor of GDP per capita, with a low p-value of 9.00e-05. However, v2x_polyarchy is not a statistically significant predictor of GDP per capita, with a high p-value of 0.411828.*
+
+```{r}
+source("http://www.reuningscherer.net/s&ds230/Rfuncs/regJDRS.txt")
+myResPlots2(lmGDPPC)
+```
+
+*The next step is to check if the conditions for normality and low heteroskedasticity are met. By creating the normal quantile plot of studentized residuals, it is evident that the conditions for normality are not met due to the presence of high outliers. Furthermore, there is high heteroskedasticity as when fitted values increases, there is a greater spread in the studentized residuals. Thus we must take a log transformation of GDP per capita and redo the previous steps.*
+
+```{r}
+fdi_mr$log_gdppc <- log(fdi_mr$gdppc)
+fdi_mr_2 <- fdi_mr[c("log_gdppc", "v2x_polyarchy", "v2x_rule", "ka_open")]
+bestSubsets2 <- regsubsets(log_gdppc ~ ., data=fdi_mr_2)
+(bestSubsets2Summary <- summary(bestSubsets2))
+bestSubsets2Summary$which
+which.max(bestSubsets2Summary$rsq)
+bsTemp2 <- fdi_mr_2[, bestSubsets2Summary$which[which.max(bestSubsets2Summary$rsq),]]
+lmGDPPC2 <- lm(log_gdppc ~ ., data = bsTemp2)
+summary(lmGDPPC2)
+myResPlots2(lmGDPPC2)
+```
+
+Much better. By taking a log transformation, the points in the normal quantile plot fall in roughly a straight line within the blue upper and lower bounds. Furthermore, the fits vs. studentized residuals plot does not show evidence of heteroskedasticity as the range of studentized residuals is about the same as fitted values increases. Looking at the best subsets results, the model with all variables is the most optimal. After the log transformation, it is still the case that ka_open and v2x_rule are statistically significant predictors of the log of GDP per capita, in this case with very low p-values of 5.47e-05 and 1.90e-09 respectively, whereas v2x_polyarchy is not a statistically significant predictor of log of GDP per capita. The positive coefficients for both v2x_rule and ka_open suggest that as rule of law becomes more transparent and as openness to world trade is higher, GDP per capita is expected to increase as well.
+
 **6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
 Regression, Multinomial Regression, OR data scraping off a website.
 
 ```{r}
-fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity", "conflict_type")]
+fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity")]
 fdi_anova <- fdi_anova[complete.cases(fdi_anova),]
-
 ```
+
+*For ANOVA, we decided to analyze whether there is a difference in mean GDP per capita among groups of countries separated by differing levels of conflict intensity. Conflict intensity is a categorical variable that represents the number of deaths as a result of armed conflict. conflict_intensity is 0 if there is no conflict, 1 if there are between 25 and 999 annual deaths, and 2 if there are 1000 or more.*
+
+```{r}
+boxplot(fdi_anova$gdppc ~ fdi_anova$conflict_intensity, main="GDP per Capita by Conflict Intensity", ylab="GDP per Capita", xlab="Conflict Intensity")
+means <- tapply(fdi_anova$gdppc, fdi_anova$conflict_intensity, mean)
+points(means, col = "red", pch = 19, cex = 1.2)
+text(x = c(1:6), y = means + 90, labels = round(means,0))
+
+(sds <- tapply(fdi_anova$gdppc, fdi_anova$conflict_intensity, sd))
+round(max(sds)/min(sds), 1)
+```
+
+*First step is to see if the assumptions of normality within groups is met, and the ratio of the highest and lowest standard deviations among the groups is less than 2. From the visual information provided by the boxplots, the distribution of GDP per capita is definitely not normal for the conflict levels. There are way too many high outliers for each group. Furthermore, by visual inspection, the countries in conflict intensity level 0 seems to have more than twice the standard deviation of the countries in conflict intensity level 2. This is confirmed by calculating the ratio of highest to lowest standard deviation among groups, which is 6.9, which is much greater than 2. Hence, a transformation is necessary. We proceed with a transformation: taking the natural log of GDP per capita and using that in place of GDP per capita.*
+
+```{r}
+fdi_anova$log_gdppc <- log(fdi_anova$gdppc)
+
+boxplot(fdi_anova$log_gdppc ~ fdi_anova$conflict_intensity, main="Log of GDP per Capita by Conflict Intensity", ylab="log of GDP per Capita", xlab="Conflict Intensity")
+means <- tapply(fdi_anova$log_gdppc, fdi_anova$conflict_intensity, mean)
+points(means, col = "red", pch = 19, cex = 1.2)
+text(x = c(1:6), y = means + 90, labels = round(means,0))
+
+(sds <- tapply(fdi_anova$log_gdppc, fdi_anova$conflict_intensity, sd))
+round(max(sds)/min(sds), 1)
+```
+
+*Much better. The ratio of highest to lowest standard deviation is 1.1, which is less than 2. Also, the groups seem to be normally distributed by looking at the boxplots. We proceed with ANOVA.*
+
+```{r}
+(aov1 <- aov(fdi_anova$log_gdppc ~ fdi_anova$conflict_intensity))
+summary(aov1)
+```
+
+*The log of GDP per capita is statistically significantly different across conflict intensity groups, as evidenced by the extremely low p-value of 1.71e-06 of ANOVA.*
+
+```{r}
+myResPlots2(aov1, label = "Log of GDP per Capita")
+```
+
+*With the log transformation, the points are approximately normally distributed as they fall on a line in the normal quantile plot. In addition the fits vs. residuals plots shows no evidence of heteroskedasticity, as the residuals are evenly distributed about 0 and there is no significant increase in spread as fitted values increases. Therefore, our ANOVA results are valid.*
 
 #### Conclusion and Summary
