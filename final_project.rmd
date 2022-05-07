@@ -55,6 +55,10 @@ Our questions of interest:
 | conflict_type      | Shows the type of armed conflict in the country (no conflict, extrasystemic, interstate, intrastate, internationalized intrastate) |
 | physint            | Measures extent to which a state violates physical integrity rights -- higher values == greater respect for these rights           |
 
+```{r}
+fdi <- read.csv("fdi_data.csv")
+```
+
 #### Data cleaning process
 
 To start, looking at the variables "wto", "alliance_US", "alliance_RU", "conflict", "conflict_intensity", and "conflict_type", these variables are categorical but are represented as numbers. We will convert these variables to categorical variables to make it easier to work with and understand the data.
@@ -70,6 +74,11 @@ fdi$conflict_type[fdi$conflict_type == 1] <- "extrasystemic"
 fdi$conflict_type[fdi$conflict_type == 2] <- "interstate"
 fdi$conflict_type[fdi$conflict_type == 3] <- "intrastate"
 fdi$conflict_type[fdi$conflict_type == 4] <- "internationalized intrastate"
+dim(fdi)
+head(fdi)
+fdi_2019 <- fdi[fdi$year == 2019,]
+dim(fdi_2019)
+head(fdi_2019)
 ```
 
 Variables we want to use:
@@ -85,14 +94,6 @@ Use the following to predict gdppc?
 - v2x_gender
 - ka_open
 
-```{r}
-fdi <- read.csv("fdi_data.csv")
-dim(fdi)
-head(fdi)
-fdi_2019 <- fdi[fdi$year == 2019,]
-dim(fdi_2019)
-head(fdi_2019)
-```
 
 **2) Scraping More Info on S&P 500 Companies** - show appropriate use of at least ONE of each of the following – boxplot,
 scatterplot (can be matrix plot), normal quantile plot (can be related to regression),
