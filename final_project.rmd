@@ -127,25 +127,9 @@ After logging the gdppc, it is a bit easier to see that there is a slight positi
 **3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
 either a t-test or a correlation.
 
-### Correlation
+# T-Test
 
-We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.046.
-
-```{r, echo = FALSE}
-plot(jitter(fdi_2019$gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "gdppc", ylab = "fdi_per_gdp")
-mtext(paste("Correlation =", round(cor(fdi_2019$gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
-mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
-abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
-```
-
-```{r}
-#Calculate the correlation between Conflict Intensity and GDP per Capita
-(cor5 <- round(cor(fdi_2019$gdppc, fdi_2019$conflict_intensity, use = "pairwise.complete.obs"),3))
-```
-
-### T-Test
-
-Using a t-test, we analyzed if there was a difference in means between alliance_US and alliance_RU. We found that there was a significant difference in means between the two variables.
+Using a t-test, we analyzed if there was a difference in means between countries that were in armed conflict and those which were not. We found that there was a significant difference in means between the two variables.
 
 ```{r}
 # Create a dataframe with just two columns for target variables
@@ -174,16 +158,44 @@ for (i in 1:N) {
 qLeft <- quantile(bootstrapped_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with armed conflict is (", qLeft[1], ", ", qLeft[2], ")")
 
-bottstrapped_no_conflict <- rep(NA, N)
+bootstrapped_no_conflict <- rep(NA, N)
 for (i in 1:N) {
-  bottstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
+  bootstrapped_no_conflict[i] <- mean(sample(gddpc_ttest_data$gdppc[gddpc_ttest_data$conflict == FALSE],
                    sum(gddpc_ttest_data$conflict == FALSE), replace = TRUE))
 }
-qRight <- quantile(bottstrapped_no_conflict, c(0.025, 0.975))
+qRight <- quantile(bootstrapped_no_conflict, c(0.025, 0.975))
 paste0("The 95% bootstrapped confidence interval for GDP per capita of countries with no armed conflict is (", qRight[1], ", ", qRight[2], ")")
 ```
 
-The bootstrapped CIs indicate the same conclusion the t-test made which is that there is a significant difference in GDP per Capita between countries that are in armed conflicts versus those that are not.
+We then created a histogram of the bootstrapped means of GDP per capita for countries with armed conflict and those without.
+
+```{r, echo=FALSE}
+hist(bootstrapped_conflict, main = "Bootstrapped Means of GDP per Capita (Armed Conflict)", xlab = "GDP per Capita", col = "red", breaks = 100)
+abline(v = mean(bootstrapped_conflict), col = "red", lwd = 2)
+abline(v = qLeft, col = "red", lwd = 2, lty = 2)
+hist(bootstrapped_no_conflict, main = "Bootstrapped Means of GDP per Capita (No Conflict)", xlab = "GDP per Capita", col = "blue", breaks = 100)
+abline(v = mean(bootstrapped_no_conflict), col = "blue", lwd = 2)
+abline(v = qRight, col = "blue", lwd = 2, lty = 2)
+```
+
+The bootstrapped CIs and histograms indicate the same conclusion as the t-test, which is that there is a significant difference in GDP per Capita between countries that are in armed conflicts versus those that are not.
+
+# Correlation
+
+We chose to look at the correlation between FDI Per GDP and GDP Per Capita and found that out of the continuous indicator variables these had a weak correlation of 0.046.
+
+```{r, echo = FALSE}
+plot(jitter(fdi_2019$gdppc), jitter(fdi_2019$fdi_per_gdp), col = "green", xlab = "gdppc", ylab = "fdi_per_gdp")
+mtext(paste("Correlation =", round(cor(fdi_2019$gdppc, fdi_2019$fdi_per_gdp, use = "complete.obs"), 3)), cex = 1.2, line = 0)
+mtext("gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
+abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$gdppc), col = "orange")
+```
+
+```{r}
+#Calculate the correlation between Conflict Intensity and GDP per Capita
+(cor5 <- round(cor(fdi_2019$gdppc, fdi_2019$conflict_intensity, use = "pairwise.complete.obs"),3))
+```
+
 
 **4) Permutation Test** - include at least one.
 
