@@ -130,9 +130,6 @@ title("Log of GDP per capita vs. Capital Account Openness in 2019")
 
 After logging the gdppc, it is a bit easier to see that there is a slight positive correlation with gdppc for the democracy index and the rule of law index. Plotting the GDP per capita with the women's empowerment index does not show a significant correlation in any way.
 
-**3) Basic Tests** - t-test, correlation, AND ability to create bootstrap confidence interval for
-either a t-test or a correlation.
-
 # T-Test
 
 Using a t-test, we analyzed if there was a difference in means between countries that were in armed conflict and those which were not. We found that there was a significant difference in means between the two variables.
@@ -149,6 +146,8 @@ colnames(gdppc_ttest_data) <- c("conflict", "log_gdppc")
 ```
 
 Because the p-value is 0.000676, at an alpha of 0.05 we would conclude that there is a statistically significant difference in GDP per capita between countries that are currently in armed conflict and those that are not.
+
+# Bootstrap
 
 We then performed a bootstrapped 95% confidence interval:
 
@@ -197,7 +196,7 @@ mtext("log_gdppc vs. fdi_per_gdp", cex = 1.2, line = 1)
 abline(lm(fdi_2019$fdi_per_gdp ~ fdi_2019$log_gdppc), col = "orange")
 ```
 
-**4) Permutation Test** - include at least one.
+# Permutation Test
 
 ```{r, echo=FALSE}
 set.seed(230)
@@ -226,9 +225,7 @@ paste("P-value:", mean(abs(diffvals) >= abs(actualdiff)))
 
 The permuted sample mean difference in log_gdppc by conflict status suggests that the difference in the sample mean is approximately -1.306. The incredibly low p-value that approaches 0.0 suggests that we reject the null hypothesis and conclude that the mean improvement in log_gdppc between groups is statistically significantly different.
 
-**5) Multiple Regression** - use either backwards stepwise regression or some form of best
-subsets regression. Should include residual plots. A GLM with a mix of continuous and
-categorical predictors is fine here.
+# Multiple Regression
 
 ```{r}
 fdi_mr <- fdi_2019[c("gdppc", "v2x_polyarchy", "v2x_rule", "ka_open")]
@@ -277,8 +274,7 @@ myResPlots2(lmGDPPC2)
 
 Much better. By taking a log transformation, the points in the normal quantile plot fall in roughly a straight line within the blue upper and lower bounds. Furthermore, the fits vs. studentized residuals plot does not show evidence of heteroskedasticity as the range of studentized residuals is about the same as fitted values increases. Looking at the best subsets results, the model with all variables is the most optimal. After the log transformation, it is still the case that ka_open and v2x_rule are statistically significant predictors of the log of GDP per capita, in this case with very low p-values of 5.47e-05 and 1.90e-09 respectively, whereas v2x_polyarchy is not a statistically significant predictor of log of GDP per capita. The positive coefficients for both v2x_rule and ka_open suggest that as rule of law becomes more transparent and as openness to world trade is higher, GDP per capita is expected to increase as well.
 
-**6) AT LEAST ONE OF THE FOLLOWING TECHNIQUES** - ANOVA, ANCOVA, Logistic
-Regression, Multinomial Regression, OR data scraping off a website.
+# ANOVA
 
 ```{r}
 fdi_anova <- fdi_2019[c("gdppc", "conflict_intensity")]
